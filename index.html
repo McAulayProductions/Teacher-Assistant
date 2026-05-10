@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher OS Starter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">TOS</div>
+        <div>
+          <h1>Teacher OS</h1>
+          <p>Planning command centre</p>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn" data-view="planner">Weekly Planner</button>
+        <button class="nav-btn" data-view="classes">Classes</button>
+        <button class="nav-btn" data-view="assessments">Assessments</button>
+        <button class="nav-btn" data-view="resources">Resources</button>
+        <button class="nav-btn" data-view="ai">AI Assistant</button>
+        <button class="nav-btn" data-view="settings">Settings</button>
+      </nav>
+
+      <div class="sidebar-card">
+        <strong>MVP Goal</strong>
+        <p>Save teachers 2+ hours per week.</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Your weekly teaching cockpit.</p>
+        </div>
+        <button id="resetDemoBtn" class="danger-btn">Reset demo data</button>
+      </header>
+
+      <section id="dashboard" class="view active-view">
+        <div class="grid stats-grid">
+          <article class="stat-card">
+            <span>Classes</span>
+            <strong id="statClasses">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Lessons this week</span>
+            <strong id="statLessons">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Assessments</span>
+            <strong id="statAssessments">0</strong>
+          </article>
+          <article class="stat-card">
+            <span>Resources</span>
+            <strong id="statResources">0</strong>
+          </article>
+        </div>
+
+        <div class="grid two-col">
+          <article class="panel">
+            <h3>Today’s Focus</h3>
+            <ul id="todayFocus" class="clean-list"></ul>
+          </article>
+
+          <article class="panel">
+            <h3>Workload Radar</h3>
+            <div id="workloadRadar" class="radar"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="planner" class="view">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Weekly Planner</h3>
+              <p>Plan lessons by day, class, topic, and focus.</p>
+            </div>
+          </div>
+
+          <form id="lessonForm" class="form-grid">
+            <select id="lessonDay" required>
+              <option value="">Day</option>
+              <option>Monday</option>
+              <option>Tuesday</option>
+              <option>Wednesday</option>
+              <option>Thursday</option>
+              <option>Friday</option>
+            </select>
+            <input id="lessonClass" placeholder="Class e.g. Year 8 Music" required />
+            <input id="lessonTopic" placeholder="Lesson topic" required />
+            <input id="lessonGoal" placeholder="Learning goal / success criteria" />
+            <button type="submit">Add lesson</button>
+          </form>
+
+          <div id="weeklyPlanner" class="week-grid"></div>
+        </article>
+      </section>
+
+      <section id="classes" class="view">
+        <article class="panel">
+          <h3>Classes</h3>
+          <form id="classForm" class="form-grid">
+            <input id="className" placeholder="Class name e.g. Year 9 Music" required />
+            <input id="classRoom" placeholder="Room e.g. Studio 1" />
+            <input id="classNotes" placeholder="Notes e.g. high support group" />
+            <button type="submit">Add class</button>
+          </form>
+          <div id="classList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="assessments" class="view">
+        <article class="panel">
+          <h3>Assessment Tracker</h3>
+          <form id="assessmentForm" class="form-grid">
+            <input id="assessmentClass" placeholder="Class" required />
+            <input id="assessmentTitle" placeholder="Assessment title" required />
+            <input id="assessmentDue" type="date" required />
+            <select id="assessmentStatus">
+              <option>Not started</option>
+              <option>Drafting</option>
+              <option>Ready</option>
+              <option>Marking</option>
+              <option>Complete</option>
+            </select>
+            <button type="submit">Add assessment</button>
+          </form>
+          <div id="assessmentList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="resources" class="view">
+        <article class="panel">
+          <h3>Resource Library</h3>
+          <form id="resourceForm" class="form-grid">
+            <input id="resourceTitle" placeholder="Resource title" required />
+            <input id="resourceSubject" placeholder="Subject / year level" />
+            <input id="resourceLink" placeholder="Link or location" />
+            <select id="resourceType">
+              <option>Lesson</option>
+              <option>Assessment</option>
+              <option>Worksheet</option>
+              <option>Video</option>
+              <option>Audio</option>
+              <option>Other</option>
+            </select>
+            <button type="submit">Add resource</button>
+          </form>
+          <div id="resourceList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="ai" class="view">
+        <article class="panel">
+          <h3>AI Assistant Prompt Builder</h3>
+          <p class="muted">This MVP creates high-quality prompts you can paste into ChatGPT. Later, we connect it directly to an AI API.</p>
+
+          <form id="promptForm" class="prompt-form">
+            <label>
+              Task type
+              <select id="promptType">
+                <option value="lesson">Create a lesson plan</option>
+                <option value="differentiate">Differentiate a task</option>
+                <option value="rubric">Create a rubric</option>
+                <option value="parent">Draft parent communication</option>
+                <option value="report">Draft report comments</option>
+              </select>
+            </label>
+
+            <label>
+              Year level / subject
+              <input id="promptClass" placeholder="e.g. Year 8 Music" />
+            </label>
+
+            <label>
+              Topic / context
+              <textarea id="promptContext" placeholder="e.g. Students are learning chord progressions using GarageBand."></textarea>
+            </label>
+
+            <label>
+              Constraints
+              <textarea id="promptConstraints" placeholder="e.g. 70 minute lesson, mixed ability, include practical activity and extension task."></textarea>
+            </label>
+
+            <button type="submit">Generate prompt</button>
+          </form>
+
+          <div class="output-box">
+            <div class="panel-header">
+              <h4>Generated Prompt</h4>
+              <button id="copyPromptBtn">Copy</button>
+            </div>
+            <pre id="promptOutput">Your generated prompt will appear here.</pre>
+          </div>
+        </article>
+      </section>
+
+      <section id="settings" class="view">
+        <article class="panel">
+          <h3>Settings</h3>
+          <form id="settingsForm" class="form-grid">
+            <input id="teacherName" placeholder="Teacher name" />
+            <input id="schoolName" placeholder="School name" />
+            <select id="mainMode">
+              <option>Music Teacher Mode</option>
+              <option>Primary Teacher Mode</option>
+              <option>Secondary General Mode</option>
+            </select>
+            <button type="submit">Save settings</button>
+          </form>
+          <p class="muted">Future settings: curriculum region, timetable cycle, student management, privacy controls, and school licence mode.</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
