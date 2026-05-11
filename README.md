@@ -1,16 +1,13 @@
-# Teacher Assistant V1.2
+# Teacher Assistant V1.3
 
-Adds:
-- Voice Command Centre
-- Browser speech recognition where supported
-- Student portfolios
-- Photo evidence upload
-- Voice-to-task
-- Voice-to-student-note
-- Voice-to-photo workflow
+Command-first interface with Australian Curriculum Version 9 planning fields.
 
-Upload these files to your GitHub Pages repository:
+## Upload to GitHub
+Replace:
 - index.html
 - style.css
 - script.js
 - README.md
+
+Commit message:
+Upgrade to V1.3 command-first curriculum-aligned dashboard
