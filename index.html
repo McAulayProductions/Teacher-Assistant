@@ -1,58 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teacher Assistant V1.3</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Assistant V1.4 Ultimate</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="wrap">
-<h1>Teacher Assistant</h1>
-<p class="sub">Say it, snap it, done.</p>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">TA</div>
+        <div>
+          <h1>Teacher Assistant</h1>
+          <p>Say it, snap it, done.</p>
+        </div>
+      </div>
 
-<section class="card hero">
-<h2>Universal Command Centre</h2>
-<textarea id="commandInput" placeholder="Remind me to email Jason's mother"></textarea>
-<div class="row">
-<button id="processBtn">Process Command</button>
-<button id="voiceBtn">Voice</button>
-</div>
-<pre id="resultBox">Ready.</pre>
-</section>
+      <nav>
+        <button class="nav-btn active" data-view="dashboard">🏠 Command</button>
+        <button class="nav-btn" data-view="students">👩‍🎓 Students</button>
+        <button class="nav-btn" data-view="planner">📅 Planner</button>
+        <button class="nav-btn" data-view="tasks">✅ Tasks</button>
+        <button class="nav-btn" data-view="classes">👥 Classes</button>
+        <button class="nav-btn" data-view="assessments">📝 Assessments</button>
+        <button class="nav-btn" data-view="resources">📂 Resources</button>
+        <button class="nav-btn" data-view="ai">🤖 AI</button>
+        <button class="nav-btn" data-view="settings">⚙️ Settings</button>
+      </nav>
 
-<section class="card">
-<h2>Australian Curriculum V9 Planner</h2>
-<div class="grid">
-<select>
-<option>Music</option><option>English</option><option>Mathematics</option>
-<option>Science</option><option>HASS</option>
-</select>
-<select>
-<option>Year 1</option><option>Year 2</option><option>Year 3</option>
-<option>Year 4</option><option>Year 5</option><option>Year 6</option>
-<option>Year 7</option><option>Year 8</option><option>Year 9</option><option>Year 10</option>
-</select>
-<input placeholder="Content description code">
-<input placeholder="Achievement standard summary">
-</div>
-</section>
+      <div class="sidebar-card">
+        <strong>V1.4 Ultimate</strong>
+        <p>Command-first dashboard + student portfolios + photo evidence + curriculum structure.</p>
+      </div>
+    </aside>
 
-<section class="card">
-<h2>Quick Actions</h2>
-<div class="row wraprow">
-<button class="quick" data-text="Create a lesson plan">Lesson Plan</button>
-<button class="quick" data-text="Create a relief lesson">Relief Lesson</button>
-<button class="quick" data-text="Create a rubric">Rubric</button>
-<button class="quick" data-text="Draft a parent email">Parent Email</button>
-</div>
-</section>
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h2 id="pageTitle">Command Centre</h2>
+          <p id="pageSubtitle">One sentence in. Sorted action out.</p>
+        </div>
+        <div class="top-actions">
+          <span id="modeBadge" class="mode-badge">Music Teacher Mode</span>
+          <button id="resetDemoBtn" class="danger-btn">Reset demo data</button>
+        </div>
+      </header>
 
-<section class="card">
-<h2>Tasks</h2>
-<ul id="taskList"></ul>
-</section>
-</div>
-<script src="script.js"></script>
+      <section id="dashboard" class="view active-view">
+        <article class="hero-card">
+          <div>
+            <p class="eyebrow">Universal command centre</p>
+            <h3 id="welcomeTitle">Tell me what needs doing.</h3>
+            <p>Faster than a sticky note. More useful than a to-do list.</p>
+          </div>
+        </article>
+
+        <article class="panel command-panel">
+          <label class="field-label">
+            Command
+            <textarea id="commandInput" placeholder="Examples:
+• Remind me to email Jason's mother
+• Add note for Jason: needs more time on composition assessment
+• Attach photo to Jason's assessment portfolio
+• Create a Year 8 Music lesson on rhythm
+• Make a rubric for Year 9 songwriting"></textarea>
+          </label>
+
+          <div class="button-row">
+            <button id="processCommandBtn">Process command</button>
+            <button id="voiceCommandBtn" class="secondary-btn">🎙️ Voice</button>
+            <button id="clearCommandBtn" class="secondary-btn">Clear</button>
+            <span id="voiceStatus" class="status-pill">Voice idle</span>
+          </div>
+
+          <div class="quick-prompts">
+            <button class="small-btn command-example" data-command="Remind me to email Jason's mother">Parent reminder</button>
+            <button class="small-btn command-example" data-command="Add note for Jason: needs extra time on assessment">Student note</button>
+            <button class="small-btn command-example" data-command="Attach photo to Jason's assessment portfolio">Attach photo</button>
+            <button class="small-btn command-example" data-command="Create a Year 8 Music lesson on rhythm aligned to Australian Curriculum V9">Lesson plan</button>
+            <button class="small-btn command-example" data-command="Create a rubric for Year 8 Music composition">Rubric</button>
+            <button class="small-btn command-example" data-command="Create a relief lesson for Year 8 Music period 3">Relief lesson</button>
+          </div>
+
+          <div class="output-box light-output">
+            <div class="panel-header"><h4>Command Result</h4></div>
+            <pre id="commandResult">Ready.</pre>
+          </div>
+        </article>
+
+        <div class="grid stats-grid">
+          <article class="stat-card"><span>Classes</span><strong id="statClasses">0</strong></article>
+          <article class="stat-card"><span>Students</span><strong id="statStudents">0</strong></article>
+          <article class="stat-card"><span>Lessons</span><strong id="statLessons">0</strong></article>
+          <article class="stat-card"><span>Open tasks</span><strong id="statTasks">0</strong></article>
+        </div>
+
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header">
+              <h3>🔥 Priority Stack</h3>
+              <button class="small-btn" data-jump="tasks">Open tasks</button>
+            </div>
+            <ul id="priorityStack" class="clean-list"></ul>
+          </article>
+
+          <article class="panel">
+            <h3>🇦🇺 Australian Curriculum V9 Snapshot</h3>
+            <div class="curriculum-summary">
+              <strong id="curriculumSummaryTitle">No curriculum focus selected.</strong>
+              <p id="curriculumSummaryText">Use the AI or settings area to tag learning area, year level, content code, and achievement standard.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="students" class="view">
+        <article class="panel">
+          <h3>Student Portfolios</h3>
+          <form id="studentForm" class="form-grid student-grid">
+            <input id="studentName" placeholder="Student name e.g. Jason" required />
+            <input id="studentClass" placeholder="Class e.g. Year 8 Music" />
+            <input id="studentNotes" placeholder="General notes" />
+            <button type="submit">Add student</button>
+          </form>
+
+          <div class="portfolio-tools">
+            <select id="portfolioStudentSelect"></select>
+            <input id="portfolioTitle" placeholder="Evidence title e.g. Draft composition" />
+            <input id="portfolioFile" type="file" accept="image/*" capture="environment" />
+            <textarea id="portfolioNote" placeholder="Teacher note / feedback"></textarea>
+            <button id="addPortfolioBtn">Attach to portfolio</button>
+          </div>
+
+          <div id="studentList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="planner" class="view">
+        <article class="panel">
+          <h3>Weekly Planner</h3>
+          <form id="lessonForm" class="form-grid lesson-grid">
+            <select id="lessonDay" required>
+              <option value="">Day</option>
+              <option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option>
+            </select>
+            <input id="lessonClass" placeholder="Class e.g. Year 8 Music" required />
+            <input id="lessonTopic" placeholder="Lesson topic" required />
+            <input id="lessonGoal" placeholder="Learning goal / success criteria" />
+            <select id="lessonStatus"><option>Planned</option><option>Needs resources</option><option>Ready</option><option>Delivered</option></select>
+            <button type="submit">Add lesson</button>
+          </form>
+          <div id="weeklyPlanner" class="week-grid"></div>
+        </article>
+      </section>
+
+      <section id="tasks" class="view">
+        <article class="panel">
+          <h3>Task Board</h3>
+          <form id="taskForm" class="form-grid task-grid">
+            <input id="taskTitle" placeholder="Task e.g. Print Year 8 rubric" required />
+            <select id="taskArea">
+              <option>Planning</option><option>Assessment</option><option>Admin</option><option>Parent contact</option><option>Resources</option><option>Behaviour</option><option>Portfolio</option><option>Curriculum</option>
+            </select>
+            <select id="taskPriority"><option>Medium</option><option>High</option><option>Low</option></select>
+            <input id="taskDue" type="date" />
+            <button type="submit">Add task</button>
+          </form>
+          <div id="taskList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="classes" class="view">
+        <article class="panel">
+          <h3>Classes</h3>
+          <form id="classForm" class="form-grid class-grid">
+            <input id="className" placeholder="Class name" required />
+            <input id="classRoom" placeholder="Room" />
+            <input id="classFocus" placeholder="Current unit / focus" />
+            <input id="classNotes" placeholder="Notes" />
+            <button type="submit">Add class</button>
+          </form>
+          <div id="classList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="assessments" class="view">
+        <article class="panel">
+          <h3>Assessment Tracker</h3>
+          <form id="assessmentForm" class="form-grid assessment-grid">
+            <input id="assessmentClass" placeholder="Class" required />
+            <input id="assessmentTitle" placeholder="Assessment title" required />
+            <input id="assessmentDue" type="date" required />
+            <select id="assessmentStatus"><option>Not started</option><option>Drafting</option><option>Ready</option><option>Collecting</option><option>Marking</option><option>Complete</option></select>
+            <button type="submit">Add assessment</button>
+          </form>
+          <div id="assessmentList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="resources" class="view">
+        <article class="panel">
+          <h3>Resource Library</h3>
+          <form id="resourceForm" class="form-grid resource-grid">
+            <input id="resourceTitle" placeholder="Resource title" required />
+            <input id="resourceSubject" placeholder="Subject / year level" />
+            <input id="resourceLink" placeholder="Link or location" />
+            <select id="resourceType"><option>Lesson</option><option>Assessment</option><option>Worksheet</option><option>Video</option><option>Audio</option><option>Rubric</option><option>Other</option></select>
+            <button type="submit">Add resource</button>
+          </form>
+          <div id="resourceList" class="card-list"></div>
+        </article>
+      </section>
+
+      <section id="ai" class="view">
+        <article class="panel">
+          <h3>AI Assistant + Australian Curriculum V9 Structure</h3>
+          <p class="muted">This builds strong prompts. Later, we connect direct AI generation and curriculum lookup.</p>
+
+          <div class="curriculum-box">
+            <h4>Curriculum Tagging</h4>
+            <div class="form-grid curriculum-grid">
+              <select id="learningArea">
+                <option>Music</option><option>The Arts</option><option>English</option><option>Mathematics</option><option>Science</option><option>HASS</option><option>Technologies</option><option>Health and Physical Education</option><option>Languages</option>
+              </select>
+              <select id="yearLevel">
+                <option>Foundation</option><option>Year 1</option><option>Year 2</option><option>Year 3</option><option>Year 4</option><option>Year 5</option><option>Year 6</option><option>Year 7</option><option>Year 8</option><option>Year 9</option><option>Year 10</option>
+              </select>
+              <input id="contentCode" placeholder="Content code e.g. AC9AMU8E01" />
+              <input id="achievementStandard" placeholder="Achievement standard summary" />
+            </div>
+          </div>
+
+          <form id="promptForm" class="prompt-form">
+            <label>Task type
+              <select id="promptType">
+                <option value="lesson">Create a lesson plan</option>
+                <option value="relief">Create a relief lesson</option>
+                <option value="differentiate">Differentiate a task</option>
+                <option value="rubric">Create a rubric</option>
+                <option value="parent">Draft parent communication</option>
+                <option value="report">Draft report comments</option>
+              </select>
+            </label>
+            <label>Year level / subject<input id="promptClass" placeholder="e.g. Year 8 Music" /></label>
+            <label>Topic / context<textarea id="promptContext" placeholder="e.g. Students are learning rhythm through body percussion and GarageBand loops."></textarea></label>
+            <label>Constraints<textarea id="promptConstraints" placeholder="e.g. 70 minutes, mixed ability, include support and extension, realistic for Australian classroom."></textarea></label>
+            <button type="submit">Generate prompt</button>
+          </form>
+
+          <div class="output-box">
+            <div class="panel-header"><h4>Generated Prompt</h4><button id="copyPromptBtn">Copy</button></div>
+            <pre id="promptOutput">Your generated prompt will appear here.</pre>
+          </div>
+        </article>
+      </section>
+
+      <section id="settings" class="view">
+        <article class="panel">
+          <h3>Settings</h3>
+          <form id="settingsForm" class="form-grid settings-grid">
+            <input id="teacherName" placeholder="Teacher name" />
+            <input id="schoolName" placeholder="School name" />
+            <select id="mainMode">
+              <option>Music Teacher Mode</option><option>Primary Teacher Mode</option><option>Secondary General Mode</option><option>English Teacher Mode</option><option>Maths Teacher Mode</option><option>Science Teacher Mode</option><option>Relief Teacher Mode</option>
+            </select>
+            <button type="submit">Save settings</button>
+          </form>
+          <div class="roadmap-box">
+            <h4>Next serious SaaS steps</h4>
+            <ul>
+              <li>Supabase login and private database</li>
+              <li>Secure student evidence storage</li>
+              <li>Direct AI command interpretation</li>
+              <li>Australian Curriculum code lookup</li>
+              <li>School licence mode</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
