@@ -1,17 +1,16 @@
-# Teacher Assistant V1.1
+# Teacher Assistant V1.2
 
-Static MVP prototype for a teacher planning and assistant app.
+Adds:
+- Voice Command Centre
+- Browser speech recognition where supported
+- Student portfolios
+- Photo evidence upload
+- Voice-to-task
+- Voice-to-student-note
+- Voice-to-photo workflow
 
-## Includes
-- Dashboard with priority stack
-- Weekly planner
-- Task board
-- Classes
-- Assessment tracker
-- Resource library
-- AI prompt builder
-- Subject/teacher modes
-- Local browser storage
-
-## Upload
-Replace your GitHub repository files with index.html, style.css, script.js, and README.md. Commit changes. GitHub Pages redeploys automatically.
+Upload these files to your GitHub Pages repository:
+- index.html
+- style.css
+- script.js
+- README.md
