@@ -1,153 +1,23 @@
-const defaultData = {
-  settings: {
-    teacherName: "Matthew",
-    schoolName: "",
-    mainMode: "Music Teacher Mode"
-  },
-  classes: [
-    { id: crypto.randomUUID(), name: "Year 8 Music", room: "Music Lab", notes: "GarageBand skills and ensemble rotation" },
-    { id: crypto.randomUUID(), name: "Year 10 Music", room: "Studio", notes: "Songwriting and production focus" }
-  ],
-  lessons: [
-    { id: crypto.randomUUID(), day: "Monday", className: "Year 8 Music", topic: "Chord progressions", goal: "Students build a 4-chord loop in GarageBand." },
-    { id: crypto.randomUUID(), day: "Wednesday", className: "Year 10 Music", topic: "Recording vocals", goal: "Students record and comp a vocal take." }
-  ],
-  assessments: [
-    { id: crypto.randomUUID(), className: "Year 8 Music", title: "Loop Composition", due: "2026-06-12", status: "Drafting" }
-  ],
-  resources: [
-    { id: crypto.randomUUID(), title: "GarageBand chord loop guide", subject: "Year 8 Music", link: "Shared Drive / Music / Year 8", type: "Worksheet" }
-  ]
-};
+const defaultData={settings:{teacherName:"Matthew",schoolName:"",mainMode:"Music Teacher Mode"},classes:[{id:crypto.randomUUID(),name:"Year 8 Music",room:"Music Lab",focus:"GarageBand loops",notes:"Mixed ability group with practical focus"},{id:crypto.randomUUID(),name:"Year 10 Music",room:"Studio",focus:"Songwriting and recording",notes:"Strong production interest"}],lessons:[{id:crypto.randomUUID(),day:"Monday",className:"Year 8 Music",topic:"Chord progressions",goal:"Students build a 4-chord loop in GarageBand.",status:"Ready"},{id:crypto.randomUUID(),day:"Wednesday",className:"Year 10 Music",topic:"Recording vocals",goal:"Students record and comp a vocal take.",status:"Needs resources"}],tasks:[{id:crypto.randomUUID(),title:"Check Year 8 loop composition rubric",area:"Assessment",priority:"High",due:"",complete:false},{id:crypto.randomUUID(),title:"Prepare vocal recording template",area:"Resources",priority:"Medium",due:"",complete:false}],assessments:[{id:crypto.randomUUID(),className:"Year 8 Music",title:"Loop Composition",due:"2026-06-12",status:"Drafting"}],resources:[{id:crypto.randomUUID(),title:"GarageBand chord loop guide",subject:"Year 8 Music",link:"Shared Drive / Music / Year 8",type:"Worksheet"}]};
+let data=loadData();
+const titles={dashboard:["Dashboard","Your weekly teaching command centre."],planner:["Weekly Planner","Map the week before it ambushes you."],tasks:["Task Board","Separate the urgent from the pretend-urgent."],classes:["Classes","Keep teaching groups organised."],assessments:["Assessments","Track what is due, ready, marked, and complete."],resources:["Resources","Your searchable teaching vault."],ai:["AI Assistant","Build teacher-ready prompts quickly."],settings:["Settings","Personalise the workspace."]};
+const promptTemplates={lesson:{type:"lesson",context:"Students are learning a new concept and need a practical, engaging lesson.",constraints:"70 minute lesson, mixed ability class, include hook, modelling, student activity, extension, support, and exit ticket."},relief:{type:"relief",context:"A relief teacher needs a low-prep lesson students can complete with minimal specialist knowledge.",constraints:"Must be clear, safe, printable or screen-ready, and include instructions for the relief teacher."},differentiate:{type:"differentiate",context:"Students need different levels of support to complete the same learning task.",constraints:"Include support, core, extension, and behaviour-friendly instructions."},rubric:{type:"rubric",context:"Students need a clear assessment rubric with levels of achievement.",constraints:"Use student-friendly language, clear criteria, and Australian schooling terminology."},parent:{type:"parent",context:"A parent/carer needs a professional update about student progress or behaviour.",constraints:"Keep tone calm, factual, supportive, and action-focused."},report:{type:"report",context:"Create report comments based on student progress, effort, behaviour, and next steps.",constraints:"Use professional Australian school language. Include strength, progress, and improvement goal."}};
+function loadData(){const saved=localStorage.getItem("teacherAssistantData");if(!saved){localStorage.setItem("teacherAssistantData",JSON.stringify(defaultData));return structuredClone(defaultData)}try{const parsed=JSON.parse(saved);return{...structuredClone(defaultData),...parsed,settings:{...defaultData.settings,...(parsed.settings||{})},classes:parsed.classes||[],lessons:parsed.lessons||[],tasks:parsed.tasks||[],assessments:parsed.assessments||[],resources:parsed.resources||[]}}catch{localStorage.setItem("teacherAssistantData",JSON.stringify(defaultData));return structuredClone(defaultData)}}
+function saveData(){localStorage.setItem("teacherAssistantData",JSON.stringify(data));renderAll()}
+function switchView(view){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active-view"));document.getElementById(view).classList.add("active-view");document.querySelectorAll(".nav-btn").forEach(btn=>btn.classList.toggle("active",btn.dataset.view===view));pageTitle.textContent=titles[view][0];pageSubtitle.textContent=titles[view][1];window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.view)));document.querySelectorAll("[data-jump]").forEach(btn=>btn.addEventListener("click",()=>switchView(btn.dataset.jump)));
+resetDemoBtn.addEventListener("click",()=>{if(confirm("Reset all Teacher Assistant demo data?")){data=structuredClone(defaultData);saveData()}});
+lessonForm.addEventListener("submit",e=>{e.preventDefault();data.lessons.push({id:crypto.randomUUID(),day:lessonDay.value,className:lessonClass.value.trim(),topic:lessonTopic.value.trim(),goal:lessonGoal.value.trim(),status:lessonStatus.value});e.target.reset();saveData()});
+taskForm.addEventListener("submit",e=>{e.preventDefault();data.tasks.push({id:crypto.randomUUID(),title:taskTitle.value.trim(),area:taskArea.value,priority:taskPriority.value,due:taskDue.value,complete:false});e.target.reset();saveData()});
+classForm.addEventListener("submit",e=>{e.preventDefault();data.classes.push({id:crypto.randomUUID(),name:className.value.trim(),room:classRoom.value.trim(),focus:classFocus.value.trim(),notes:classNotes.value.trim()});e.target.reset();saveData()});
+assessmentForm.addEventListener("submit",e=>{e.preventDefault();data.assessments.push({id:crypto.randomUUID(),className:assessmentClass.value.trim(),title:assessmentTitle.value.trim(),due:assessmentDue.value,status:assessmentStatus.value});e.target.reset();saveData()});
+resourceForm.addEventListener("submit",e=>{e.preventDefault();data.resources.push({id:crypto.randomUUID(),title:resourceTitle.value.trim(),subject:resourceSubject.value.trim(),link:resourceLink.value.trim(),type:resourceType.value});e.target.reset();saveData()});
+settingsForm.addEventListener("submit",e=>{e.preventDefault();data.settings={teacherName:teacherName.value.trim(),schoolName:schoolName.value.trim(),mainMode:mainMode.value};saveData()});
+document.querySelectorAll(".prompt-chip").forEach(chip=>chip.addEventListener("click",()=>{const t=promptTemplates[chip.dataset.template];promptType.value=t.type;promptContext.value=t.context;promptConstraints.value=t.constraints}));
+promptForm.addEventListener("submit",e=>{e.preventDefault();const type=promptType.value,classText=promptClass.value.trim()||"the class",context=promptContext.value.trim()||"the current unit",constraints=promptConstraints.value.trim()||"make it practical, clear, differentiated, and teacher-ready";const taskMap={lesson:"Create a complete lesson plan",relief:"Create a relief lesson plan",differentiate:"Differentiate this learning task",rubric:"Create a student-friendly rubric",parent:"Draft a professional parent communication",report:"Draft report comments"};promptOutput.textContent=`${taskMap[type]} for ${classText}.
 
-let data = loadData();
-
-const titles = {
-  dashboard: ["Dashboard", "Your weekly teaching cockpit."],
-  planner: ["Weekly Planner", "Map the week before it ambushes you."],
-  classes: ["Classes", "Keep your teaching groups organised."],
-  assessments: ["Assessments", "Track what is due, ready, marked, and complete."],
-  resources: ["Resources", "Your searchable teaching vault."],
-  ai: ["AI Assistant", "Build better prompts faster."],
-  settings: ["Settings", "Personalise the workspace."]
-};
-
-function loadData() {
-  const saved = localStorage.getItem("teacherOSData");
-  if (!saved) {
-    localStorage.setItem("teacherOSData", JSON.stringify(defaultData));
-    return structuredClone(defaultData);
-  }
-  try {
-    return JSON.parse(saved);
-  } catch {
-    localStorage.setItem("teacherOSData", JSON.stringify(defaultData));
-    return structuredClone(defaultData);
-  }
-}
-
-function saveData() {
-  localStorage.setItem("teacherOSData", JSON.stringify(data));
-  renderAll();
-}
-
-function switchView(view) {
-  document.querySelectorAll(".view").forEach(v => v.classList.remove("active-view"));
-  document.getElementById(view).classList.add("active-view");
-
-  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
-  document.getElementById("pageTitle").textContent = titles[view][0];
-  document.getElementById("pageSubtitle").textContent = titles[view][1];
-}
-
-document.querySelectorAll(".nav-btn").forEach(btn => {
-  btn.addEventListener("click", () => switchView(btn.dataset.view));
-});
-
-document.getElementById("resetDemoBtn").addEventListener("click", () => {
-  if (confirm("Reset all Teacher OS demo data?")) {
-    data = structuredClone(defaultData);
-    saveData();
-  }
-});
-
-document.getElementById("lessonForm").addEventListener("submit", event => {
-  event.preventDefault();
-  data.lessons.push({
-    id: crypto.randomUUID(),
-    day: lessonDay.value,
-    className: lessonClass.value.trim(),
-    topic: lessonTopic.value.trim(),
-    goal: lessonGoal.value.trim()
-  });
-  event.target.reset();
-  saveData();
-});
-
-document.getElementById("classForm").addEventListener("submit", event => {
-  event.preventDefault();
-  data.classes.push({
-    id: crypto.randomUUID(),
-    name: className.value.trim(),
-    room: classRoom.value.trim(),
-    notes: classNotes.value.trim()
-  });
-  event.target.reset();
-  saveData();
-});
-
-document.getElementById("assessmentForm").addEventListener("submit", event => {
-  event.preventDefault();
-  data.assessments.push({
-    id: crypto.randomUUID(),
-    className: assessmentClass.value.trim(),
-    title: assessmentTitle.value.trim(),
-    due: assessmentDue.value,
-    status: assessmentStatus.value
-  });
-  event.target.reset();
-  saveData();
-});
-
-document.getElementById("resourceForm").addEventListener("submit", event => {
-  event.preventDefault();
-  data.resources.push({
-    id: crypto.randomUUID(),
-    title: resourceTitle.value.trim(),
-    subject: resourceSubject.value.trim(),
-    link: resourceLink.value.trim(),
-    type: resourceType.value
-  });
-  event.target.reset();
-  saveData();
-});
-
-document.getElementById("settingsForm").addEventListener("submit", event => {
-  event.preventDefault();
-  data.settings = {
-    teacherName: teacherName.value.trim(),
-    schoolName: schoolName.value.trim(),
-    mainMode: mainMode.value
-  };
-  saveData();
-});
-
-document.getElementById("promptForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const type = promptType.value;
-  const classText = promptClass.value.trim() || "the class";
-  const context = promptContext.value.trim() || "the current unit";
-  const constraints = promptConstraints.value.trim() || "make it practical, clear, differentiated, and teacher-ready";
-
-  const taskMap = {
-    lesson: "Create a complete lesson plan",
-    differentiate: "Differentiate this learning task",
-    rubric: "Create a student-friendly rubric",
-    parent: "Draft a professional parent communication",
-    report: "Draft report comments"
-  };
-
-  const prompt = `${taskMap[type]} for ${classText}.
+Teacher mode:
+${data.settings.mainMode||"Teacher Mode"}
 
 Context:
 ${context}
@@ -162,138 +32,18 @@ Please include:
 - timing or structure
 - success criteria
 - practical classroom considerations
+- Australian school language
+- a realistic workload-friendly format
 
-Use Australian school language and keep it realistic for a busy teacher.`;
-
-  promptOutput.textContent = prompt;
-});
-
-document.getElementById("copyPromptBtn").addEventListener("click", async () => {
-  await navigator.clipboard.writeText(promptOutput.textContent);
-  copyPromptBtn.textContent = "Copied";
-  setTimeout(() => copyPromptBtn.textContent = "Copy", 1200);
-});
-
-function deleteItem(collection, id) {
-  data[collection] = data[collection].filter(item => item.id !== id);
-  saveData();
-}
-
-window.deleteItem = deleteItem;
-
-function renderAll() {
-  renderDashboard();
-  renderPlanner();
-  renderClasses();
-  renderAssessments();
-  renderResources();
-  renderSettings();
-}
-
-function renderDashboard() {
-  statClasses.textContent = data.classes.length;
-  statLessons.textContent = data.lessons.length;
-  statAssessments.textContent = data.assessments.length;
-  statResources.textContent = data.resources.length;
-
-  const focusItems = [
-    ...data.lessons.slice(0, 3).map(l => `${l.day}: ${l.className} — ${l.topic}`),
-    ...data.assessments.slice(0, 2).map(a => `Assessment: ${a.title} due ${a.due}`)
-  ];
-
-  todayFocus.innerHTML = focusItems.length
-    ? focusItems.map(item => `<li>${escapeHtml(item)}</li>`).join("")
-    : "<li>No focus items yet. Add lessons and assessments.</li>";
-
-  const workload = [
-    ["Planning", Math.min(100, data.lessons.length * 15)],
-    ["Assessment", Math.min(100, data.assessments.length * 25)],
-    ["Resources", Math.min(100, data.resources.length * 12)]
-  ];
-
-  workloadRadar.innerHTML = workload.map(([label, value]) => `
-    <div class="radar-row">
-      <span>${label}</span>
-      <div class="bar"><span style="width:${value}%"></span></div>
-      <span>${value}%</span>
-    </div>
-  `).join("");
-}
-
-function renderPlanner() {
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  weeklyPlanner.innerHTML = days.map(day => {
-    const lessons = data.lessons.filter(l => l.day === day);
-    return `
-      <div class="day-column">
-        <h4>${day}</h4>
-        ${lessons.length ? lessons.map(l => `
-          <div class="lesson-card">
-            <strong>${escapeHtml(l.className)}</strong>
-            <div>${escapeHtml(l.topic)}</div>
-            <div class="meta">${escapeHtml(l.goal || "No goal added")}</div>
-            <div class="card-actions">
-              <button class="small-btn delete-btn" onclick="deleteItem('lessons','${l.id}')">Delete</button>
-            </div>
-          </div>
-        `).join("") : `<p class="muted">No lessons yet.</p>`}
-      </div>
-    `;
-  }).join("");
-}
-
-function renderClasses() {
-  classList.innerHTML = data.classes.length ? data.classes.map(c => `
-    <div class="item-card">
-      <strong>${escapeHtml(c.name)}</strong>
-      <div class="meta">${escapeHtml(c.room || "No room")} · ${escapeHtml(c.notes || "No notes")}</div>
-      <div class="card-actions">
-        <button class="small-btn delete-btn" onclick="deleteItem('classes','${c.id}')">Delete</button>
-      </div>
-    </div>
-  `).join("") : `<p class="muted">No classes yet.</p>`;
-}
-
-function renderAssessments() {
-  assessmentList.innerHTML = data.assessments.length ? data.assessments.map(a => `
-    <div class="item-card">
-      <strong>${escapeHtml(a.title)}</strong>
-      <div>${escapeHtml(a.className)}</div>
-      <div class="meta">Due: ${escapeHtml(a.due)} · Status: ${escapeHtml(a.status)}</div>
-      <div class="card-actions">
-        <button class="small-btn delete-btn" onclick="deleteItem('assessments','${a.id}')">Delete</button>
-      </div>
-    </div>
-  `).join("") : `<p class="muted">No assessments yet.</p>`;
-}
-
-function renderResources() {
-  resourceList.innerHTML = data.resources.length ? data.resources.map(r => `
-    <div class="item-card">
-      <strong>${escapeHtml(r.title)}</strong>
-      <div>${escapeHtml(r.subject || "No subject")} · ${escapeHtml(r.type)}</div>
-      <div class="meta">${escapeHtml(r.link || "No link added")}</div>
-      <div class="card-actions">
-        <button class="small-btn delete-btn" onclick="deleteItem('resources','${r.id}')">Delete</button>
-      </div>
-    </div>
-  `).join("") : `<p class="muted">No resources yet.</p>`;
-}
-
-function renderSettings() {
-  teacherName.value = data.settings.teacherName || "";
-  schoolName.value = data.settings.schoolName || "";
-  mainMode.value = data.settings.mainMode || "Music Teacher Mode";
-}
-
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
-}
-
-renderAll();
+Avoid vague advice. Make it usable immediately by a busy teacher.`});
+copyPromptBtn.addEventListener("click",async()=>{await navigator.clipboard.writeText(promptOutput.textContent);copyPromptBtn.textContent="Copied";setTimeout(()=>copyPromptBtn.textContent="Copy",1200)});
+function deleteItem(collection,id){data[collection]=data[collection].filter(item=>item.id!==id);saveData()}function toggleTask(id){data.tasks=data.tasks.map(t=>t.id===id?{...t,complete:!t.complete}:t);saveData()}window.deleteItem=deleteItem;window.toggleTask=toggleTask;
+function renderAll(){renderDashboard();renderPlanner();renderTasks();renderClasses();renderAssessments();renderResources();renderSettings()}
+function renderDashboard(){const openTasks=data.tasks.filter(t=>!t.complete);statClasses.textContent=data.classes.length;statLessons.textContent=data.lessons.length;statTasks.textContent=openTasks.length;statAssessments.textContent=data.assessments.length;modeBadge.textContent=data.settings.mainMode||"Teacher Mode";welcomeTitle.textContent=`${data.settings.teacherName||"Teacher"}, here is the week in one glance.`;const highTask=openTasks.find(t=>t.priority==="High"),needsResources=data.lessons.find(l=>l.status==="Needs resources"),marking=data.assessments.find(a=>a.status==="Marking"||a.status==="Drafting");nextBestAction.textContent=highTask?`Start here: ${highTask.title}`:needsResources?`Next useful move: prepare resources for ${needsResources.className} — ${needsResources.topic}.`:marking?`Assessment needs attention: ${marking.title} for ${marking.className}.`:"No major fires showing. Add upcoming lessons and tasks to sharpen the radar.";const priorityItems=[...openTasks.sort(prioritySort).slice(0,4).map(t=>`${t.priority} priority: ${t.title}${t.due?" due "+t.due:""}`),...data.assessments.filter(a=>a.status!=="Complete").slice(0,2).map(a=>`Assessment: ${a.title} due ${a.due}`)];priorityStack.innerHTML=priorityItems.length?priorityItems.map(i=>`<li>${escapeHtml(i)}</li>`).join(""):"<li>No priority items yet. Add tasks or assessments.</li>";const workload=[["Planning",Math.min(100,data.lessons.length*12)],["Tasks",Math.min(100,openTasks.length*18)],["Assessment",Math.min(100,data.assessments.filter(a=>a.status!=="Complete").length*28)],["Resources",Math.min(100,data.resources.length*10)]];workloadRadar.innerHTML=workload.map(([label,value])=>`<div class="radar-row"><span>${label}</span><div class="bar"><span style="width:${value}%"></span></div><span>${value}%</span></div>`).join("");weekSnapshot.innerHTML=["Monday","Tuesday","Wednesday","Thursday","Friday"].map(day=>{const n=data.lessons.filter(l=>l.day===day).length;return`<div class="snapshot-card"><span>${day}</span><strong>${n}</strong><span class="meta">lesson${n===1?"":"s"}</span></div>`}).join("")}
+function renderPlanner(){weeklyPlanner.innerHTML=["Monday","Tuesday","Wednesday","Thursday","Friday"].map(day=>{const lessons=data.lessons.filter(l=>l.day===day);return`<div class="day-column"><h4>${day}</h4>${lessons.length?lessons.map(l=>`<div class="lesson-card"><strong>${escapeHtml(l.className)}</strong><div>${escapeHtml(l.topic)}</div><div class="meta">${escapeHtml(l.goal||"No goal added")}</div><span class="status-pill">${escapeHtml(l.status||"Planned")}</span><div class="card-actions"><button class="small-btn delete-btn" onclick="deleteItem('lessons','${l.id}')">Delete</button></div></div>`).join(""):`<p class="muted">No lessons yet.</p>`}</div>`}).join("")}
+function renderTasks(){const sorted=[...data.tasks].sort((a,b)=>Number(a.complete)-Number(b.complete)||prioritySort(a,b));taskList.innerHTML=sorted.length?sorted.map(t=>`<div class="item-card priority-${t.priority.toLowerCase()}"><strong>${escapeHtml(t.title)}</strong><div class="meta">${escapeHtml(t.area)} · ${escapeHtml(t.priority)} priority${t.due?" · Due "+escapeHtml(t.due):""}</div><span class="status-pill">${t.complete?"Complete":"Open"}</span><div class="card-actions"><button class="small-btn complete-btn" onclick="toggleTask('${t.id}')">${t.complete?"Reopen":"Complete"}</button><button class="small-btn delete-btn" onclick="deleteItem('tasks','${t.id}')">Delete</button></div></div>`).join(""):`<p class="muted">No tasks yet.</p>`}
+function renderClasses(){classList.innerHTML=data.classes.length?data.classes.map(c=>`<div class="item-card"><strong>${escapeHtml(c.name)}</strong><div>${escapeHtml(c.focus||"No current focus")}</div><div class="meta">${escapeHtml(c.room||"No room")} · ${escapeHtml(c.notes||"No notes")}</div><div class="card-actions"><button class="small-btn delete-btn" onclick="deleteItem('classes','${c.id}')">Delete</button></div></div>`).join(""):`<p class="muted">No classes yet.</p>`}
+function renderAssessments(){const sorted=[...data.assessments].sort((a,b)=>String(a.due).localeCompare(String(b.due)));assessmentList.innerHTML=sorted.length?sorted.map(a=>`<div class="item-card"><strong>${escapeHtml(a.title)}</strong><div>${escapeHtml(a.className)}</div><div class="meta">Due: ${escapeHtml(a.due)} · Status: ${escapeHtml(a.status)}</div><div class="card-actions"><button class="small-btn delete-btn" onclick="deleteItem('assessments','${a.id}')">Delete</button></div></div>`).join(""):`<p class="muted">No assessments yet.</p>`}
+function renderResources(){resourceList.innerHTML=data.resources.length?data.resources.map(r=>`<div class="item-card"><strong>${escapeHtml(r.title)}</strong><div>${escapeHtml(r.subject||"No subject")} · ${escapeHtml(r.type)}</div><div class="meta">${escapeHtml(r.link||"No link added")}</div><div class="card-actions"><button class="small-btn delete-btn" onclick="deleteItem('resources','${r.id}')">Delete</button></div></div>`).join(""):`<p class="muted">No resources yet.</p>`}
+function renderSettings(){teacherName.value=data.settings.teacherName||"";schoolName.value=data.settings.schoolName||"";mainMode.value=data.settings.mainMode||"Music Teacher Mode";modeBadge.textContent=data.settings.mainMode||"Teacher Mode"}
+function prioritySort(a,b){const w={High:0,Medium:1,Low:2};return(w[a.priority]??3)-(w[b.priority]??3)}function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[ch]))}renderAll();

@@ -1,26 +1,17 @@
-# Teacher OS Starter
+# Teacher Assistant V1.1
 
-This is a static MVP prototype for Teacher OS.
+Static MVP prototype for a teacher planning and assistant app.
 
-## What it includes
-- Dashboard
-- Weekly Planner
+## Includes
+- Dashboard with priority stack
+- Weekly planner
+- Task board
 - Classes
-- Assessment Tracker
-- Resource Library
-- AI Prompt Builder
-- Settings
+- Assessment tracker
+- Resource library
+- AI prompt builder
+- Subject/teacher modes
 - Local browser storage
 
-## How to use
-1. Unzip the folder.
-2. Open `index.html` in a browser.
-3. To publish, upload these files to a GitHub Pages repository.
-
-## Next version ideas
-- Supabase login/database
-- AI API integration
-- Curriculum outcome tagging
-- Student profiles
-- School licensing
-- Export to PDF
+## Upload
+Replace your GitHub repository files with index.html, style.css, script.js, and README.md. Commit changes. GitHub Pages redeploys automatically.
